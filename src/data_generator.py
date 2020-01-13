@@ -1,6 +1,4 @@
-
 import numpy as np
-
 from threading import Semaphore, Thread
 from time import sleep
 from random import choice, randint
@@ -40,18 +38,19 @@ class DataGenerator(object):
 		self._X, self._Y = self._get_buffers(self._pool_size)
 
 	def _get_buffers(self, N):
+		# N就是batch_size的大小，默认N = 1000, self._xshape = (208, 208, 3), self._dtype=single
 		X = np.empty((N,) + self._xshape, dtype=self._dtype)
 		Y = np.empty((N,) + self._yshape, dtype=self._dtype)
+		# x = (1000, 208, 208, 3)
+		# (1000, ) + (208, 208, 3) = (1000, 208, 208, 3) 元组相加小知识
 		return X, Y
 
 	def _compute_sample(self):
+		# 从self._data数组中随机选择一个数据
 		d = self._data_item_selector(self._data)
-		# 	d = [file_path, shape]
-		# return self._process_data_item(d)
 		return self._process_data_item((cv2.imread(d[0]), d[1]))
 
 	def _insert_data(self, x, y):
-
 		self._sem.acquire()
 
 		if self._count < self._pool_size:
