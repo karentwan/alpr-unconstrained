@@ -1,22 +1,20 @@
-
 import numpy as np
-
 from os.path import isfile
 
 
 class Label:
 
 	def __init__(self, cl=-1, tl=np.array([0., 0.]), br=np.array([0., 0.]), prob=None):
-		self.__tl 	= tl
-		self.__br 	= br
-		self.__cl 	= cl
+		self.__tl = tl
+		self.__br = br
+		self.__cl = cl
 		self.__prob = prob
 
 	def __str__(self):
 		return 'Class: %d, top_left(x:%f,y:%f), bottom_right(x:%f,y:%f)' % (self.__cl, self.__tl[0], self.__tl[1], self.__br[0], self.__br[1])
 
 	def copy(self):
-		return Label(self.__cl,self.__tl,self.__br)
+		return Label(self.__cl, self.__tl, self.__br)
 
 	def wh(self): return self.__br-self.__tl
 
@@ -26,9 +24,9 @@ class Label:
 
 	def br(self): return self.__br
 
-	def tr(self): return np.array([self.__br[0],self.__tl[1]])
+	def tr(self): return np.array([self.__br[0], self.__tl[1]])
 
-	def bl(self): return np.array([self.__tl[0],self.__br[1]])
+	def bl(self): return np.array([self.__tl[0], self.__br[1]])
 
 	def cl(self): return self.__cl
 
@@ -57,7 +55,6 @@ class Label:
 def lread(file_path, label_type=Label):
 	if not isfile(file_path):
 		return []
-
 	objs = []
 	with open(file_path,'r') as fd:
 		for line in fd:
@@ -66,12 +63,9 @@ def lread(file_path, label_type=Label):
 			ccx, ccy = float(v[1]), float(v[2])
 			w, h = float(v[3]), float(v[4])
 			prob = float(v[5]) if len(v) == 6 else None
-
 			cc = np.array([ccx, ccy])
 			wh = np.array([w, h])
-
 			objs.append(label_type(cl, cc-wh/2, cc+wh/2, prob=prob))
-
 	return objs
 
 
@@ -89,8 +83,8 @@ def dknet_label_conversion(R, img_width, img_height):
 	WH = np.array([img_width, img_height], dtype=float)
 	L = []
 	for r in R:
-		center = np.array(r[2][:2])/WH
-		wh2 = (np.array(r[2][2:])/WH)*.5
+		center = np.array(r[2][:2]) / WH
+		wh2 = (np.array(r[2][2:]) / WH) * .5
 		L.append(Label(ord(r[0]), tl=center-wh2, br=center+wh2, prob=r[1]))
 	return L
 

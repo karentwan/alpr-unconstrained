@@ -55,11 +55,11 @@ def nms(Labels,iou_threshold=.5):
 
 def image_files_from_folder(folder, upper=True):
 	extensions = ['jpg', 'jpeg', 'png']
-	img_files  = []
+	img_files = []
 	for ext in extensions:
-		img_files += glob('%s/*.%s' % (folder,ext))
+		img_files += glob('%s/*.%s' % (folder, ext))
 		if upper:
-			img_files += glob('%s/*.%s' % (folder,ext.upper()))
+			img_files += glob('%s/*.%s' % (folder, ext.upper()))
 	return img_files
 
 
