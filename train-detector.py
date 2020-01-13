@@ -1,22 +1,14 @@
-
-import sys
-import numpy as np
-import cv2
 import argparse
 import keras
 import tensorflow as tf
-from random import choice
 from os.path import isfile, isdir, basename, splitext
 from os import makedirs
-
 from src.keras_utils import save_model, load_model
 from src.label import readShapes
 from src.loss import loss
 from src.utils import image_files_from_folder, show
 from src.sampler import augment_sample, labels2output_map
 from src.data_generator import DataGenerator
-
-from pdb import set_trace as pause
 
 
 def load_network(modelpath, lp_path, input_dim):
