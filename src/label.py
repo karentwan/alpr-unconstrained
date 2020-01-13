@@ -16,14 +16,19 @@ class Label:
 	def copy(self):
 		return Label(self.__cl, self.__tl, self.__br)
 
+	# 获取矩形框的宽和高
 	def wh(self): return self.__br - self.__tl
 
+	# 获取矩形框的正中心
 	def cc(self): return self.__tl + self.wh()/2
 
+	# 获取左上角的坐标
 	def tl(self): return self.__tl
 
+	# 获取右下角的坐标
 	def br(self): return self.__br
 
+	# 获取右上角的坐标
 	def tr(self): return np.array([self.__br[0], self.__tl[1]])
 
 	def bl(self): return np.array([self.__tl[0], self.__br[1]])

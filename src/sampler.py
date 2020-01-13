@@ -7,19 +7,20 @@ from src.projection_utils import perspective_transform, find_T_matrix, getRectPt
 
 
 def labels2output_map(label, lppts, dim, stride):
+	# dim=208
 	side = ((float(dim) + 40.)/2.)/stride  # 7.75 when dim = 208 and stride = 16
-	outsize = int(dim/stride)
+	outsize = int(dim/stride)  # 208 / 16 = 13
 	Y = np.zeros((outsize, outsize, 2*4+1), dtype='float32')
 	MN = np.array([outsize, outsize])
 	WH = np.array([dim, dim], dtype=float)
-	tlx,tly = np.floor(np.maximum(label.tl(), 0.)*MN).astype(int).tolist()
-	brx,bry = np.ceil(np.minimum(label.br(), 1.)*MN).astype(int).tolist()
+	tlx, tly = np.floor(np.maximum(label.tl(), 0.)*MN).astype(int).tolist()
+	brx, bry = np.ceil(np.minimum(label.br(), 1.)*MN).astype(int).tolist()
 	for x in range(tlx, brx):
 		for y in range(tly, bry):
 			mn = np.array([float(x) + .5, float(y) + .5])
 			iou = IOU_centre_and_dims(mn/MN, label.wh(), label.cc(), label.wh())
 			if iou > .5:
-				p_WH = lppts*WH.reshape((2, 1))
+				p_WH = lppts * WH.reshape((2, 1))
 				p_MN = p_WH/stride
 				p_MN_center_mn = p_MN - mn.reshape((2, 1))
 				p_side = p_MN_center_mn/side
@@ -28,6 +29,7 @@ def labels2output_map(label, lppts, dim, stride):
 	return Y
 
 
+# 让pts变成(3, 4)的矩阵，第三行为全1的一行向量
 def pts2ptsh(pts):
 	return np.matrix(np.concatenate((pts, np.ones((1, pts.shape[1]))), 0))
 
@@ -56,14 +58,15 @@ def augment_sample(I, pts, dim):
 	angles = np.random.rand(3) * maxangle
 	if angles.sum() > maxsum:
 		angles = (angles/angles.sum()) * (maxangle/maxangle.sum())
-	I = im2single(I)
+	I = im2single(I)  # 车牌坐标归一化
 	iwh = getWH(I.shape)  # 得到图像的width 和 height
-	whratio = random.uniform(2., 4.)
+	whratio = random.uniform(2., 4.)  # 宽高比例，只要知道高，就可以根据这个比例得到宽
 	wsiz = random.uniform(dim * .2, dim * 1.)
 	hsiz = wsiz/whratio
 	dx = random.uniform(0., dim - wsiz)
 	dy = random.uniform(0., dim - hsiz)
 	pph = getRectPts(dx, dy, dx+wsiz, dy+hsiz)
+	# pts是一个2*4的矩阵，iwh是2*1的宽和高矩阵，下面是求出坐标点的原始坐标
 	pts = pts * iwh.reshape((2, 1))
 	T = find_T_matrix(pts2ptsh(pts), pph)
 	H = perspective_transform((dim, dim), angles=angles)

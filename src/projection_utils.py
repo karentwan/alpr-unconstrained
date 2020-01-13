@@ -39,7 +39,7 @@ def perspective_transform(wh, angles=np.array([0., 0., 0.]), zcop=1000., dpp=100
 	P = np.matrix([[1, 0, 0, 0],
 				   [0, 1, 0, 0],
 				   [0, 0, -1./dpp, 0]])
-	_hxy = P*hxyz
+	_hxy = P * hxyz
 	_hxy = _hxy/_hxy[2, :]
 	_hxy = _hxy + np.matrix([[w], [h], [0]]) / 2.
 	return find_T_matrix(hxy,_hxy)

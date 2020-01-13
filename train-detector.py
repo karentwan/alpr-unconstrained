@@ -14,7 +14,7 @@ def load_network(modelpath, lp_path, input_dim):
 	model = load_model(modelpath, lp_path)
 	input_shape = (input_dim, input_dim, 3)
 	# Fixed input size for training
-	inputs = keras.layers.Input(shape=(input_dim,input_dim,3))
+	inputs = keras.layers.Input(shape=(input_dim, input_dim, 3))
 	outputs = model(inputs)
 	# output_shape = [h, w, c], 也就是输出的feature map的shape
 	# 注意，这里的输出模型是8个通道
@@ -34,6 +34,7 @@ def process_data_item(data_item, dim, model_stride):
 	# 数据增强，因为车牌的位置变了，因此也要计算标签的位置
 	# XX是图像增强后的图片
 	# llp是车牌左上角和右下角的封装(里面还有中心点的坐标，默认是0)
+	# 因为只有左上角和右下角，因此这里保存的是一个矩形而并不是整个车牌的区域
 	# pts是车牌左上，右上，右下，左下,一个2*4的numpy矩阵
 	XX, llp, pts = augment_sample(data_item[0], data_item[1].pts, dim)
 	YY = labels2output_map(llp, pts, dim, model_stride)
