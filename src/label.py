@@ -16,7 +16,7 @@ class Label:
 	def copy(self):
 		return Label(self.__cl, self.__tl, self.__br)
 
-	def wh(self): return self.__br-self.__tl
+	def wh(self): return self.__br - self.__tl
 
 	def cc(self): return self.__tl + self.wh()/2
 
@@ -56,7 +56,7 @@ def lread(file_path, label_type=Label):
 	if not isfile(file_path):
 		return []
 	objs = []
-	with open(file_path,'r') as fd:
+	with open(file_path, 'r') as fd:
 		for line in fd:
 			v = line.strip().split()
 			cl = int(v[0])

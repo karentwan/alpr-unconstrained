@@ -5,7 +5,7 @@ from os import makedirs
 from src.keras_utils import save_model, load_model
 from src.label import readShapes
 from src.loss import loss
-from src.utils import image_files_from_folder, show
+from src.utils import image_files_from_folder
 from src.sampler import augment_sample, labels2output_map
 from src.data_generator import DataGenerator
 
@@ -31,8 +31,13 @@ def load_network(modelpath, lp_path, input_dim):
 
 
 def process_data_item(data_item, dim, model_stride):
+	# 数据增强，因为车牌的位置变了，因此也要计算标签的位置
+	# XX是图像增强后的图片
+	# llp是车牌左上角和右下角的封装(里面还有中心点的坐标，默认是0)
+	# pts是车牌左上，右上，右下，左下,一个2*4的numpy矩阵
 	XX, llp, pts = augment_sample(data_item[0], data_item[1].pts, dim)
 	YY = labels2output_map(llp, pts, dim, model_stride)
+	# 返回原始图像和标签，左边是原始图像，右边是标签
 	return XX, YY
 
 
