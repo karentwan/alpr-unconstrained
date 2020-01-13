@@ -102,13 +102,14 @@ if __name__ == '__main__':
 		labfile = splitext(file)[0] + '.txt'
 		if isfile(labfile):
 			L = readShapes(labfile)
-			I = cv2.imread(file)
+			# I = cv2.imread(file)
+			I = file
 			Data.append([I, L[0]])
 
 	print('%d images with labels found' % len(Data))
 
 	dg = DataGenerator(data=Data,
-					   process_data_item_func=lambda x: process_data_item(x,dim,model_stride),
+					   process_data_item_func=lambda x: process_data_item(x, dim, model_stride),
 					   xshape=xshape,
 					   yshape=(yshape[0], yshape[1], yshape[2]+1),
 					   nthreads=2,
@@ -116,8 +117,8 @@ if __name__ == '__main__':
 					   min_nsamples=100)
 	dg.start()
 	# np.empty()函数会返回一个指定维度的随机矩阵
-	Xtrain = np.empty((batch_size, dim, dim, 3), dtype='single')
-	Ytrain = np.empty((batch_size, int(dim//model_stride), int(dim//model_stride), 2*4+1))
+	# Xtrain = np.empty((batch_size, dim, dim, 3), dtype='single')
+	# Ytrain = np.empty((batch_size, int(dim//model_stride), int(dim//model_stride), 2*4+1))
 
 	model_path_backup = '%s/%s_backup' % (outdir, netname)
 	model_path_final = '%s/%s_final' % (outdir, netname)

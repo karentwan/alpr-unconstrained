@@ -4,6 +4,7 @@ import numpy as np
 from threading import Semaphore, Thread
 from time import sleep
 from random import choice, randint
+import cv2
 from pdb import set_trace as pause
 
 
@@ -45,7 +46,9 @@ class DataGenerator(object):
 
 	def _compute_sample(self):
 		d = self._data_item_selector(self._data)
-		return self._process_data_item(d)
+		# 	d = [file_path, shape]
+		# return self._process_data_item(d)
+		return self._process_data_item((cv2.imread(d[0]), d[1]))
 
 	def _insert_data(self, x, y):
 
