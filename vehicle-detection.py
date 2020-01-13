@@ -21,9 +21,9 @@ if __name__ == '__main__':
 
 		vehicle_threshold = .5
 
-		vehicle_weights = 'data/vehicle-detector/yolo-voc.weights'
-		vehicle_netcfg  = 'data/vehicle-detector/yolo-voc.cfg'
-		vehicle_dataset = 'data/vehicle-detector/voc.data'
+		vehicle_weights = 'data/vehicle-detector/yolo-voc.weights'.encode('utf-8')
+		vehicle_netcfg  = 'data/vehicle-detector/yolo-voc.cfg'.encode('utf-8')
+		vehicle_dataset = 'data/vehicle-detector/voc.data'.encode('utf-8')
 
 		vehicle_net  = dn.load_net(vehicle_netcfg, vehicle_weights, 0)
 		vehicle_meta = dn.load_meta(vehicle_dataset)
@@ -34,19 +34,19 @@ if __name__ == '__main__':
 		if not isdir(output_dir):
 			makedirs(output_dir)
 
-		print 'Searching for vehicles using YOLO...'
+		print('Searching for vehicles using YOLO...')
 
-		for i,img_path in enumerate(imgs_paths):
-
-			print '\tScanning %s' % img_path
+		for i, img_path in enumerate(imgs_paths):
+			img_path = img_path.encode('utf-8')
+			print('\tScanning %s' % img_path)
 
 			bname = basename(splitext(img_path)[0])
 
-			R,_ = detect(vehicle_net, vehicle_meta, img_path ,thresh=vehicle_threshold)
+			R,_ = detect(vehicle_net, vehicle_meta, img_path, thresh=vehicle_threshold)
 
 			R = [r for r in R if r[0] in ['car','bus']]
 
-			print '\t\t%d cars found' % len(R)
+			print('\t\t%d cars found' % len(R))
 
 			if len(R):
 

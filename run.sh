@@ -31,6 +31,7 @@ then
 fi
 
 lp_model="data/lp-detector/wpod-net_update1.h5"
+model_path="data/lp-detector/wpod-net_update1.json"
 input_dir=''
 output_dir=''
 csv_file=''
@@ -87,20 +88,22 @@ fi
 set -e
 
 # Detect vehicles
-python vehicle-detection.py $input_dir $output_dir
+#python vehicle-detection.py $input_dir $output_dir
 
 # Detect license plates
-python license-plate-detection.py $output_dir $lp_model
-
-# OCR
-python license-plate-ocr.py $output_dir
+python license-plate-detection.py $input_dir $lp_model $model_path
 
 # Draw output and generate list
 python gen-outputs.py $input_dir $output_dir > $csv_file
 
+# OCR
+python license-plate-ocr.py $output_dir
+
+
+
 # Clean files and draw output
-rm $output_dir/*_lp.png
-rm $output_dir/*car.png
-rm $output_dir/*_cars.txt
-rm $output_dir/*_lp.txt
-rm $output_dir/*_str.txt
+#rm $output_dir/*_lp.png
+#rm $output_dir/*car.png
+#rm $output_dir/*_cars.txt
+#rm $output_dir/*_lp.txt
+#rm $output_dir/*_str.txt
