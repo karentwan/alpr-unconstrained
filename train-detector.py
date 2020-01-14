@@ -37,6 +37,8 @@ def process_data_item(data_item, dim, model_stride):
 	# 因为只有左上角和右下角，因此这里保存的是一个矩形而并不是整个车牌的区域
 	# pts是车牌左上，右上，右下，左下,一个2*4的numpy矩阵
 	XX, llp, pts = augment_sample(data_item[0], data_item[1].pts, dim)
+	# 根据给定的标签，然后创建一个[dim/stride, dim/stride, 2*4+1]大小的feature map，其中将
+	# 坐标对应缩小stride倍，然后应用论文公式(3)对坐标进行计算，然后将起赋值给feature map里面的1-8这些feature map
 	YY = labels2output_map(llp, pts, dim, model_stride)
 	# 返回原始图像和标签，左边是原始图像，右边是标签
 	return XX, YY
