@@ -104,7 +104,7 @@ def detect_lp(model, I, max_dim, net_step, out_size, threshold):
 	h += (h % net_step != 0) * (net_step - h % net_step)
 	Iresized = cv2.resize(I, (w, h))
 	T = Iresized.copy()
-	T = T.reshape((1, T.shape[0], T.shape[1], T.shape[2]))  # 也可以使用np.expamd_dim()扩展一个维度
+	T = T.reshape((1, T.shape[0], T.shape[1], T.shape[2]))  # 也可以使用np.expand_dim()扩展一个维度
 	start = time.time()
 	Yr = model.predict(T)
 	Yr = np.squeeze(Yr)  # 也可以使用Yr[0]
