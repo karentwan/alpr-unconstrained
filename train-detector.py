@@ -65,7 +65,7 @@ if __name__ == '__main__':
 	outdir = args.output_dir
 	iterations = args.iterations
 	batch_size = args.batch_size
-	dim = 208
+	dim = 208  # 输入图片的大小
 	if not isdir(outdir):
 		makedirs(outdir)
 	model, model_stride, xshape, yshape = load_network(args.model, args.lp_path, dim)

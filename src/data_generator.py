@@ -24,8 +24,8 @@ class DataGenerator(object):
 		self._process_data_item = process_data_item_func
 		self._data_item_selector = data_item_selector
 		self._xshape = xshape
-		self._yshape = yshape
-		self._nthreads = nthreads
+		self._yshape = yshape  # yshape = xshape / stride
+		self._nthreads = nthreads  # 线程的数量
 		self._pool_size = pool_size
 		self._min_nsamples = min_nsamples
 		self._dtype = dtype
@@ -66,8 +66,8 @@ class DataGenerator(object):
 
 	def _run(self):
 		while True:
-			x, y = self._compute_sample()
-			self._insert_data(x, y)
+			x, y = self._compute_sample()  # 读取数据
+			self._insert_data(x, y)        # 往缓存里面插入数据
 			if self._stop:
 				break
 
@@ -81,7 +81,7 @@ class DataGenerator(object):
 		self._threads = [Thread(target=self._run) for n in range(self._nthreads)]
 		for thread in self._threads:
 			thread.setDaemon(True)
-			thread.start()
+			thread.start()  # 开启多线程
 
 	def get_batch(self, N):
 		# Wait until the buffer was filled with the minimum

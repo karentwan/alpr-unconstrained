@@ -81,9 +81,11 @@ def augment_sample(I, pts, dim):
 	hsv_mod = np.random.rand(3).astype('float32')
 	hsv_mod = (hsv_mod - .5) * .3
 	hsv_mod[0] *= 360
+	# 将Iroi颜色空间从RGB转换到HSV颜色空间
 	Iroi = hsv_transform(Iroi, hsv_mod)
-	Iroi = np.clip(Iroi, 0., 1.)
+	Iroi = np.clip(Iroi, 0., 1.)  # 限制Iroi里面的像素值范围
 	pts = np.array(pts)
+	# 随机对Iroi进行翻转
 	if random.random() > .5:
 		Iroi, pts = flip_image_and_pts(Iroi, pts)
 	tl, br = pts.min(1), pts.max(1)

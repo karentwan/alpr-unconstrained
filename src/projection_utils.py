@@ -23,6 +23,7 @@ def getRectPts(tlx, tly, brx, bry):
 					  [1., 1., 1., 1.]], dtype=float)
 
 
+# 手动求透视变换的矩阵（find_T_matrix函数所需要寻找的就是这个矩阵）
 def perspective_transform(wh, angles=np.array([0., 0., 0.]), zcop=1000., dpp=1000.):
 	rads = np.deg2rad(angles)
 	a = rads[0]; Rx = np.matrix([[1, 0, 0]				, [0, cos(a), sin(a)]	, [0, -sin(a), cos(a)]	])
@@ -30,6 +31,7 @@ def perspective_transform(wh, angles=np.array([0., 0., 0.]), zcop=1000., dpp=100
 	a = rads[2]; Rz = np.matrix([[cos(a), sin(a), 0]	, [-sin(a), cos(a), 0]	, [0, 0, 1]				])
 	R = Rx * Ry * Rz
 	(w, h) = tuple(wh)
+	# np.matrix是np.array的一个小分支，其只能是二维的，如果要做矩阵相乘，只需要a * b, np.array做矩阵相乘需要使用np.dot()函数
 	xyz = np.matrix([[0, 0, w, w], [0, h, 0, h], [0, 0, 0, 0]])
 	hxy = np.matrix([[0, 0, w, w], [0, h, 0, h], [1, 1, 1, 1]])
 	xyz = xyz - np.matrix([[w], [h], [0]])/2.
@@ -40,6 +42,6 @@ def perspective_transform(wh, angles=np.array([0., 0., 0.]), zcop=1000., dpp=100
 				   [0, 1, 0, 0],
 				   [0, 0, -1./dpp, 0]])
 	_hxy = P * hxyz
-	_hxy = _hxy/_hxy[2, :]
+	_hxy = _hxy / _hxy[2, :]
 	_hxy = _hxy + np.matrix([[w], [h], [0]]) / 2.
 	return find_T_matrix(hxy, _hxy)

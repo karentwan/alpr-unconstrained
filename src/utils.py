@@ -1,8 +1,6 @@
-
 import numpy as np
 import cv2
 import sys
-
 from glob import glob
 
 
@@ -20,10 +18,13 @@ def getWH(shape):
 def IOU(tl1, br1, tl2, br2):
 	wh1, wh2 = br1-tl1, br2-tl2
 	assert((wh1 >= .0).all() and (wh2 >= .0).all())
-	intersection_wh = np.maximum(np.minimum(br1, br2) - np.maximum(tl1, tl2), 0.)
+	# a = [21, 35], b = [24, 36], np.minimum(a, b) = [21, 35]
+	# a = [18, 35], b = [24, 36], np.minimum(a, b) = [18, 35]
+	intersection_wh = np.maximum(np.minimum(br1, br2) - np.maximum(tl1, tl2), 0.)  # 求两个矩形的交集
+	# np.prod连乘操作
 	intersection_area = np.prod(intersection_wh)
 	area1, area2 = (np.prod(wh1), np.prod(wh2))
-	union_area = area1 + area2 - intersection_area
+	union_area = area1 + area2 - intersection_area  # 求两个矩形的并集
 	return intersection_area/union_area
 
 
@@ -37,12 +38,17 @@ def IOU_centre_and_dims(cc1, wh1, cc2, wh2):
 
 # 非极大值抑制
 def nms(Labels, iou_threshold=.5):
+	# iou_threshold = 0.1
 	SelectedLabels = []
-	Labels.sort(key=lambda l: l.prob(),reverse=True)
+	# 先根据概率(也就是使用第一个feature map的值)来排序
+	Labels.sort(key=lambda l: l.prob(), reverse=True)
+	# 思想：首先取第一个值放入SelectedLabels数组中，然后将跟这个数组里面所有元素都不相交的
+	# 的框放入数组中
 	for label in Labels:
 		non_overlap = True
 		for sel_label in SelectedLabels:
-			if IOU_labels(label,sel_label) > iou_threshold:
+			# IOU大于0.1的都不要
+			if IOU_labels(label, sel_label) > iou_threshold:
 				non_overlap = False
 				break
 		if non_overlap:
