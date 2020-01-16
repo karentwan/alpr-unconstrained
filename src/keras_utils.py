@@ -47,6 +47,7 @@ def reconstruct(Iorig, I, Y, out_size, threshold=.9):
 	rx, ry = Y.shape[:2]
 	ywh = Y.shape[1::-1]
 	iwh = np.array(I.shape[1::-1], dtype=float).reshape((2, 1))
+	# 感觉这里不是说预测的车牌区域，而相当于yolo网络里面的置信度，因为预测了这么多值，只取了其中一个最大的值
 	xx, yy = np.where(Probs > threshold)  # 获取概率大于阈值的地方，也就是预测的车牌区域, np.where返回的是大于阈值的坐标
 	WH = getWH(I.shape)
 	MN = WH / net_stride
@@ -80,6 +81,7 @@ def reconstruct(Iorig, I, Y, out_size, threshold=.9):
 			# label.pts = (2, 4)
 			# ptsh = (3, 4)
 			ptsh = np.concatenate((label.pts * getWH(Iorig.shape).reshape((2, 1)), np.ones((1, 4))))
+			# 下面的这个函数，可以使用cv2.getPerspectiveTransform来代替
 			H = find_T_matrix(ptsh, t_ptsh)
 			# 下面是对Iorig里面车牌区域进行透视变换，最后的输出只有车牌区域
 			Ilp = cv2.warpPerspective(Iorig, H, out_size, borderValue=.0)
