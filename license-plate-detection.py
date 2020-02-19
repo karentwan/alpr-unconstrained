@@ -32,7 +32,7 @@ if __name__ == '__main__':
 			bname = splitext(basename(img_path))[0]
 			Ivehicle = cv2.imread(img_path)
 			# Ivehicle.shape = [h, w, c], Ivehicle.shape[:2] = [h, w]
-			# 下面对应论文公式(1)，图像越小，需要放大更大的倍数
+			# 下面对应论文公式(1), 图像越小, 需要放大更大的倍数
 			ratio = float(max(Ivehicle.shape[:2]))/min(Ivehicle.shape[:2])
 			side = int(ratio*288.)
 			bound_dim = min(side + (side % (2**4)), 608)

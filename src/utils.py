@@ -106,7 +106,7 @@ def IOU(tl1, br1, tl2, br2):
 	union_area = area1 + area2 - intersection_area
 	return intersection_area/union_area
 
-
+# 传入中心点和宽高, 并以此计算IOU
 def IOU_centre_and_dims(cc1, wh1, cc2, wh2):
 	return IOU(cc1-wh1/2., cc1+wh1/2., cc2-wh2/2., cc2+wh2/2.)
 

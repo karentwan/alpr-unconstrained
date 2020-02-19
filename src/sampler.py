@@ -7,15 +7,15 @@ from src.projection_utils import perspective_transform, find_T_matrix, getRectPt
 
 
 def labels2output_map(label, lppts, dim, stride):
-	# 因为输入图片是(208, 208, 3)，因此，经过4次池化之后的feature map会缩小16倍
+	# 因为输入图片是(208, 208, 3), 因此, 经过4次池化之后的feature map会缩小16倍
 	# dim=208
-	# lppts：车牌区域的四个点的精确的坐标，一个2*4的矩阵，分别是左上，右上，右下，左下
+	# lppts：车牌区域的四个点的精确的坐标, 一个2*4的矩阵, 分别是左上, 右上, 右下, 左下
 	side = ((float(dim) + 40.)/2.)/stride  # 7.75 when dim = 208 and stride = 16
 	outsize = int(dim/stride)  # 208 / 16 = 13
-	Y = np.zeros((outsize, outsize, 2*4+1), dtype='float32')
-	MN = np.array([outsize, outsize])  # 就是一个数组，[13, 13]
+	Y = np.zeros((outsize, outsize, 2*4+1), dtype='float32')  # M \times N \times 9
+	MN = np.array([outsize, outsize])  # 就是一个数组, [13, 13]
 	WH = np.array([dim, dim], dtype=float)  # 数组[208, 208]
-	# 因为车牌的坐标是除了高和宽的，因此车牌的坐标在对应的缩小后的feature map里面可以直接乘以缩小后的feature map高和宽
+	# 因为车牌的坐标是除了高和宽的, 因此车牌的坐标在对应的缩小后的feature map里面可以直接乘以缩小后的feature map高和宽
 	# 得到对应的图片大小
 	tlx, tly = np.floor(np.maximum(label.tl(), 0.)*MN).astype(int).tolist()
 	brx, bry = np.ceil(np.minimum(label.br(), 1.)*MN).astype(int).tolist()
@@ -28,13 +28,13 @@ def labels2output_map(label, lppts, dim, stride):
 				p_WH = lppts * WH.reshape((2, 1))  # 将四个点的坐标乘以高和宽变为真正的坐标
 				p_MN = p_WH/stride   # 坐标除以步长得到feature map缩小后对应的坐标位置
 				p_MN_center_mn = p_MN - mn.reshape((2, 1))  # 论文公式(3)
-				p_side = p_MN_center_mn/side  # 论文alpha的，
+				p_side = p_MN_center_mn/side  # 论文alpha的
 				Y[y, x, 0] = 1.
 				Y[y, x, 1:] = p_side.T.flatten()
 	return Y
 
 
-# 让pts变成(3, 4)的矩阵，第三行为全1的一行向量
+# 让pts变成(3, 4)的矩阵, 第三行为全1的一行向量
 def pts2ptsh(pts):
 	return np.matrix(np.concatenate((pts, np.ones((1, pts.shape[1]))), 0))
 
@@ -65,13 +65,13 @@ def augment_sample(I, pts, dim):
 		angles = (angles/angles.sum()) * (maxangle/maxangle.sum())
 	I = im2single(I)  # 车牌坐标归一化
 	iwh = getWH(I.shape)  # 得到图像的width 和 height
-	whratio = random.uniform(2., 4.)  # 宽高比例，只要知道高，就可以根据这个比例得到宽
+	whratio = random.uniform(2., 4.)  # 宽高比例, 只要知道高, 就可以根据这个比例得到宽
 	wsiz = random.uniform(dim * .2, dim * 1.)  # 生成的数据在[dim * .2, dim * 1]之间
 	hsiz = wsiz/whratio
 	dx = random.uniform(0., dim - wsiz)
 	dy = random.uniform(0., dim - hsiz)
 	pph = getRectPts(dx, dy, dx+wsiz, dy+hsiz)
-	# pts是一个2*4的矩阵，iwh是2*1的宽和高矩阵，下面是求出坐标点的原始坐标
+	# pts是一个2*4的矩阵, iwh是2*1的宽和高矩阵, 下面是求出坐标点的原始坐标
 	pts = pts * iwh.reshape((2, 1))
 	T = find_T_matrix(pts2ptsh(pts), pph)
 	H = perspective_transform((dim, dim), angles=angles)

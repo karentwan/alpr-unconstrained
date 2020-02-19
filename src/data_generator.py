@@ -40,8 +40,10 @@ class DataGenerator(object):
 	def _get_buffers(self, N):
 		# N就是batch_size的大小，默认N = 1000, self._xshape = (208, 208, 3), self._dtype=single
 		X = np.empty((N,) + self._xshape, dtype=self._dtype)
+		# self._yshape = (13, 13, 8)
 		Y = np.empty((N,) + self._yshape, dtype=self._dtype)
 		# x = (1000, 208, 208, 3)
+		# y = (1000, 13, 13, 8)
 		# (1000, ) + (208, 208, 3) = (1000, 208, 208, 3) 元组相加小知识
 		return X, Y
 
