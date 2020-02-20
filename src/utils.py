@@ -42,7 +42,7 @@ def nms(Labels, iou_threshold=.5):
 	SelectedLabels = []
 	# 先根据概率(也就是使用第一个feature map的值)来排序
 	Labels.sort(key=lambda l: l.prob(), reverse=True)
-	# 思想：首先取第一个值放入SelectedLabels数组中，然后将跟这个数组里面所有元素都不相交的
+	# 思想：首先取第一个值放入SelectedLabels数组中, 然后将跟这个数组里面所有元素都不相交的
 	# 的框放入数组中
 	for label in Labels:
 		non_overlap = True

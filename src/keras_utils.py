@@ -83,7 +83,9 @@ def reconstruct(Iorig, I, Y, out_size, threshold=.9):
 			ptsh = np.concatenate((label.pts * getWH(Iorig.shape).reshape((2, 1)), np.ones((1, 4))))
 			# 下面的这个函数，可以使用cv2.getPerspectiveTransform来代替
 			H = find_T_matrix(ptsh, t_ptsh)
-			# 下面是对Iorig里面车牌区域进行透视变换，最后的输出只有车牌区域
+			# 下面是对Iorig里面车牌区域进行透视变换, 最后的输出只有车牌区域
+			# 下面这个函数是根据透视矩阵来进行透视变换, 如果不用这个函数的话也可以进行透视变换
+			# 那样的话就需要把图像里面的每一个点都取出来, 然后跟透视矩阵进行矩阵相乘
 			Ilp = cv2.warpPerspective(Iorig, H, out_size, borderValue=.0)
 			TLps.append(Ilp)
 	return final_labels, TLps

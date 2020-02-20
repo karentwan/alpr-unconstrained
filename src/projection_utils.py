@@ -29,15 +29,32 @@ def getRectPts(tlx, tly, brx, bry):
 
 # 手动求透视变换的矩阵（find_T_matrix函数所需要寻找的就是这个矩阵）
 def perspective_transform(wh, angles=np.array([0., 0., 0.]), zcop=1000., dpp=1000.):
+	# angles to radians, 将角度转换为弧度, 这里的angles有三个值, 分别是x, y, z轴三个方向的旋转角度
 	rads = np.deg2rad(angles)
-	a = rads[0]; Rx = np.matrix([[1, 0, 0]				, [0, cos(a), sin(a)]	, [0, -sin(a), cos(a)]	])
-	a = rads[1]; Ry = np.matrix([[cos(a), 0, -sin(a)]	, [0, 1, 0]				, [sin(a), 0, cos(a)]	])
-	a = rads[2]; Rz = np.matrix([[cos(a), sin(a), 0]	, [-sin(a), cos(a), 0]	, [0, 0, 1]				])
+	a = rads[0]
+	# 绕x轴旋转的透视矩阵
+	Rx = np.matrix([[1, 0, 0],
+					[0, cos(a), sin(a)],
+					[0, -sin(a), cos(a)]])
+	a = rads[1]
+	# 绕y轴旋转的透视矩阵
+	Ry = np.matrix([[cos(a), 0, -sin(a)],
+					[0, 1, 0],
+					[sin(a), 0, cos(a)]])
+	a = rads[2]
+	# 绕z轴旋转的透视矩阵
+	Rz = np.matrix([[cos(a), sin(a), 0],
+					[-sin(a), cos(a), 0],
+					[0, 0, 1]])
 	R = Rx * Ry * Rz
 	(w, h) = tuple(wh)
-	# np.matrix是np.array的一个小分支，其只能是二维的，如果要做矩阵相乘，只需要a * b, np.array做矩阵相乘需要使用np.dot()函数
-	xyz = np.matrix([[0, 0, w, w], [0, h, 0, h], [0, 0, 0, 0]])
-	hxy = np.matrix([[0, 0, w, w], [0, h, 0, h], [1, 1, 1, 1]])
+	# np.matrix是np.array的一个小分支, 其只能是二维的, 如果要做矩阵相乘, 只需要a * b, np.array做矩阵相乘需要使用np.dot()函数
+	xyz = np.matrix([[0, 0, w, w],
+					 [0, h, 0, h],
+					 [0, 0, 0, 0]])
+	hxy = np.matrix([[0, 0, w, w],
+					 [0, h, 0, h],
+					 [1, 1, 1, 1]])
 	xyz = xyz - np.matrix([[w], [h], [0]])/2.
 	xyz = R*xyz
 	xyz = xyz - np.matrix([[0], [0], [zcop]])

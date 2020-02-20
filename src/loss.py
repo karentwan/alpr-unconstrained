@@ -47,10 +47,11 @@ def loss(Ytrue, Ypred):
 	base = tf.tile(base, tf.stack([b, h, w, 1]))  # shape = [b, h, w, 12]
 	pts = tf.zeros((b, h, w, 0))
 	# 这下面整个循环都是在计算公式(2)
+	# 4个点, 每一个点都要进行矩阵变换(每一次遍历就是对一个点进行仿射变换, 因此需要遍历4次)
 	for i in range(0, 12, 3):  # 0-12遍历，每隔3取一次值，即i = 0, 3, 6, 9
 		row = base[..., i:(i+3)]  # row = [b, h, w, 3], 这里的3对应max(v3, 0), v4, v5
-		ptsx = tf.reduce_sum(affinex*row, 3)  # 矩阵乘法，对应位置相乘再相加，shape = [b, h, w, 1]
-		ptsy = tf.reduce_sum(affiney*row, 3)  #
+		ptsx = tf.reduce_sum(affinex*row, 3)  # 矩阵乘法, 对应位置相乘再相加, shape = [b, h, w, 1], 得到变换之后的x坐标
+		ptsy = tf.reduce_sum(affiney*row, 3)  # 矩阵乘法, 得到变换之后的y坐标
 		pts_xy = tf.stack([ptsx, ptsy], 3)
 		pts = (tf.concat([pts, pts_xy], 3))
 	# pts是公式(2)里面的T(q)
